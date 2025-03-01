@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Stage 3: The Cave of Wonders – Fragment Selection</title>
+  <!-- Google Fonts for a classical, Arabian feel -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* Animated gradient background with violet and blue hues */
+    @keyframes gradientAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Cinzel', serif;
+      background: linear-gradient(45deg, #4B0082, #00008B, #8A2BE2, #1E90FF);
+      background-size: 400% 400%;
+      animation: gradientAnimation 15s ease infinite;
+      color: #f5f5f5;
+      text-align: center;
+      min-height: 100vh;
+      overflow-y: auto;
+    }
+    .container {
+      background: rgba(0, 0, 50, 0.85);
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 800px;
+      margin: 0 auto 20px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.8);
+      border: 2px solid #ffd700;
+      animation: fadeInUp 1s ease-out forwards;
+      opacity: 0;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
+      color: #ffd700;
+    }
+    p {
+      font-size: 1.2em;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      border: 2px solid #ffd700;
+      padding: 10px;
+      text-align: center;
+    }
+    td img {
+      max-width: 80px; /* Resize images for consistency */
+      border-radius: 5px;
+    }
+    form {
+      margin-top: 20px;
+    }
+    input[type="text"] {
+      width: 80%;
+      padding: 12px;
+      font-size: 1em;
+      border: 2px solid #b8860b;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      color: #333;
+    }
+    button {
+      padding: 12px 20px;
+      font-size: 1em;
+      background-color: #b8860b;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+    button:hover {
+      background-color: #d4af37;
+      transform: scale(1.05);
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 1.4em;
+      font-weight: bold;
+      text-align: center;
+    }
+    .error {
+      background-color: rgba(255, 0, 0, 0.6);
+      padding: 10px;
+      border-radius: 5px;
+      text-align: center;
+    }
+    .success {
+      background-color: rgba(0, 128, 0, 0.6);
+      padding: 10px;
+      border-radius: 5px;
+      text-align: center;
+    }
+    a {
+      color: #ffd700;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Stage 3: The Cave of Wonders – Fragment Selection</h1>
+    <p>
+      Below is a table of eight fragments. Each fragment displays an image and a randomly assigned unique number.
+      Four of these fragments are the genuine Aladdin artifacts needed to unlock the next stage,
+      while the others are decoys meant to mislead.
+      <br>
+      <em>Watch the provided video clip from the movie to determine the correct sequence.</em>
+      <br>
+      Then, enter the sequence (numbers separated by hyphens, e.g. "3-6-2-8") corresponding to the four correct fragments in the correct order.
+    </p>
+    <!-- Embedded video (replace with actual clip if desired) -->
+    <div>
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/8V20LS9h_0Q" title="Aladdin Clip" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <br>
+    <!-- Fragments table will be generated dynamically -->
+    <table id="fragmentsTable">
+      <tr>
+        <th>Fragment</th>
+        <th>Image</th>
+        <th>Number</th>
+      </tr>
+    </table>
+    <p>Please enter the sequence of numbers corresponding to the four correct fragments in the correct order (separated by hyphens):</p>
+    <form id="fragmentForm">
+      <input type="text" id="sequenceInput" placeholder="e.g., 3-6-2-8">
+      <button type="submit">Submit Sequence</button>
+    </form>
+    <div id="result"></div>
+  </div>
+  
+  <script>
+    // Define the fragments
+    // correct: true for genuine Aladdin artifacts
+    const fragments = [
+      { name: "Magic Lamp", image: "./lamp.webp", correct: true },
+      { name: "Royal Crown", image: "./crown.webp", correct: false },
+      { name: "Ancient Book", image: "./book.webp", correct: true },
+      { name: "Flying Carpet", image: "./carpet.webp", correct: false },
+      { name: "Shining Star", image: "./star.webp", correct: true },
+      { name: "Jasmine Portrait", image: "./princess.webp", correct: false },
+      { name: "Crescent Moon", image: "./moon.webp", correct: true },
+      { name: "Charming Parrot", image: "./parrot.webp", correct: false }
+    ];
+    
+    // Randomly assign unique numbers 1 through 8 to each fragment
+    const numbers = [1,2,3,4,5,6,7,8];
+    numbers.sort(() => Math.random() - 0.5); // Shuffle numbers randomly
+    fragments.forEach((fragment, index) => {
+      fragment.assignedNumber = numbers[index];
+    });
+    
+    // Populate the table with fragments
+    const table = document.getElementById("fragmentsTable");
+    fragments.forEach(fragment => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${fragment.name}</td>
+        <td><img src="${fragment.image}" alt="${fragment.name}"></td>
+        <td>${fragment.assignedNumber}</td>
+      `;
+      // Store whether the fragment is correct as a data attribute (hidden to user)
+      row.dataset.correct = fragment.correct;
+      row.dataset.name = fragment.name;
+      row.dataset.assigned = fragment.assignedNumber;
+      table.appendChild(row);
+    });
+    
+    // Predetermined order for the correct fragments (by name)
+    // For example, the order is: Magic Lamp, Ancient Book, Shining Star, Crescent Moon.
+    const correctOrder = ["Magic Lamp", "Ancient Book", "Shining Star", "Crescent Moon"];
+    
+    // Compute the correct sequence by mapping the correct fragments (in predetermined order) to their assigned numbers.
+    let correctSequence = correctOrder.map(name => {
+      const frag = fragments.find(f => f.name === name);
+      return frag ? frag.assignedNumber : null;
+    }).join("-");
+    
+    // For testing purposes, you can uncomment the following line to log the correct sequence in the console:
+    // console.log("Correct Sequence:", correctSequence);
+    
+    document.getElementById("fragmentForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const userSequence = document.getElementById("sequenceInput").value.trim();
+      const resultDiv = document.getElementById("result");
+      
+      if (userSequence === correctSequence) {
+        resultDiv.innerHTML = '<div class="success">Correct! You have unlocked the next stage.</div>';
+      } else {
+        resultDiv.innerHTML = '<div class="error">Incorrect sequence. Please review the video and try again.</div>';
+      }
+    });
+  </script>
+</body>
+</html>
