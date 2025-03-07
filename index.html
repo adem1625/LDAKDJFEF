@@ -2,216 +2,291 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Stage 3: The Cave of Wonders – Fragment Selection</title>
-  <!-- Google Fonts for a classical, Arabian feel -->
+  <title>The Genie and Escape </title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    /* Animated gradient background with violet and blue hues */
+    /*4*/
+
+    /* Consistent gradient animation */
     @keyframes gradientAnimation {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
+
     body {
       margin: 0;
-      padding: 20px;
+      padding: 0;
       font-family: 'Cinzel', serif;
       background: linear-gradient(45deg, #4B0082, #00008B, #8A2BE2, #1E90FF);
       background-size: 400% 400%;
       animation: gradientAnimation 15s ease infinite;
       color: #f5f5f5;
-      text-align: center;
       min-height: 100vh;
       overflow-y: auto;
     }
+
+    /* Main container styling */
     .container {
       background: rgba(0, 0, 50, 0.85);
-      padding: 30px;
+      padding: 40px 50px;
       border-radius: 10px;
-      max-width: 800px;
-      margin: 0 auto 20px;
       box-shadow: 0 6px 20px rgba(0,0,0,0.8);
+      max-width: 600px;
+      width: 90%;
       border: 2px solid #ffd700;
+      margin: 40px auto;
       animation: fadeInUp 1s ease-out forwards;
       opacity: 0;
+      position: relative;
+      z-index: 2;
     }
+
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    h1 {
-      font-size: 2em;
-      margin-bottom: 20px;
+
+    /* Wish tabs styling */
+    .wish-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin: 30px 0;
+    }
+
+    .wish-tab {
+      padding: 12px 25px;
+      background: rgba(255, 215, 0, 0.1);
+      border: 2px solid #ffd700;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1.1em;
       color: #ffd700;
     }
-    p {
-      font-size: 1.2em;
-      margin-bottom: 20px;
-      line-height: 1.5;
+
+    .wish-tab.active {
+      background: rgba(255, 215, 0, 0.3);
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
     }
-    table {
+
+    /* Challenge containers */
+    .challenge-container {
+      display: none;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 25px;
+      border-radius: 8px;
+      border: 1px solid #ffd700;
+      margin: 20px 0;
+    }
+
+    .challenge-container.active {
+      display: block;
+      animation: fadeInUp 0.5s ease-out;
+    }
+
+    /* Form elements */
+    input[type="text"], input[type="number"] {
       width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
-    }
-    th, td {
-      border: 2px solid #ffd700;
-      padding: 10px;
-      text-align: center;
-    }
-    td img {
-      max-width: 80px; /* Resize images for consistency */
-      border-radius: 5px;
-    }
-    form {
-      margin-top: 20px;
-    }
-    input[type="text"] {
-      width: 80%;
       padding: 12px;
+      margin: 10px 0;
       font-size: 1em;
-      border: 2px solid #b8860b;
+      border: 2px solid #ffd700;
       border-radius: 5px;
-      margin-bottom: 20px;
       background: rgba(255, 255, 255, 0.95);
       color: #333;
+      transition: all 0.3s ease;
     }
+
+    input:focus {
+      border-color: #8A2BE2;
+      outline: none;
+      box-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+    }
+
     button {
-      padding: 12px 20px;
-      font-size: 1em;
-      background-color: #b8860b;
+      padding: 12px 25px;
+      font-size: 1.1em;
+      background-color: #9370DB;
       color: #fff;
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      transition: background-color 0.3s, transform 0.3s;
+      transition: all 0.3s ease;
+      width: 100%;
+      margin-top: 15px;
     }
+
     button:hover {
-      background-color: #d4af37;
+      background-color: #8A2BE2;
       transform: scale(1.05);
     }
-    #result {
+
+    /* Genie animation */
+    #genieAnimation {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1000;
+      text-align: center;
+    }
+
+    #genieAnimation img {
+      width: 300px;
+      animation: genieFadeIn 1s ease-out forwards;
+    }
+
+    #genieMessage {
       margin-top: 20px;
       font-size: 1.4em;
-      font-weight: bold;
-      text-align: center;
+      background: rgba(0, 0, 50, 0.9);
+      padding: 20px;
+      border-radius: 10px;
+      border: 2px solid #ffd700;
+      box-shadow: 0 0 20px rgba(255,215,0,0.5);
     }
-    .error {
-      background-color: rgba(255, 0, 0, 0.6);
-      padding: 10px;
-      border-radius: 5px;
-      text-align: center;
+
+    @keyframes genieFadeIn {
+      from { opacity: 0; transform: scale(0.5) translateY(50px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
     }
+
+    /* Consistent result messages */
     .success {
-      background-color: rgba(0, 128, 0, 0.6);
-      padding: 10px;
+      color: #90EE90;
+      background: rgba(0, 255, 0, 0.15);
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #90EE90;
+      margin: 15px 0;
+    }
+
+    .error {
+      color: #ff4d4d;
+      background: rgba(255, 0, 0, 0.15);
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #ff4d4d;
+      margin: 15px 0;
+    }
+
+    .cipher-box {
+      font-family: 'Cinzel', serif;
+      font-size: 1.2em;
+      letter-spacing: 2px;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.1);
       border-radius: 5px;
-      text-align: center;
-    }
-    a {
-      color: #ffd700;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    a:hover {
-      text-decoration: underline;
+      margin: 15px 0;
+      border: 1px solid #ffd700;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Stage 3: The Cave of Wonders – Fragment Selection</h1>
-    <p>
-      Below is a table of eight fragments. Each fragment displays an image and a randomly assigned unique number.
-      Four of these fragments are the genuine Aladdin artifacts needed to unlock the next stage,
-      while the others are decoys meant to mislead.
-      <br>
-      <em>Watch the provided video clip from the movie to determine the correct sequence.</em>
-      <br>
-      Then, enter the sequence (numbers separated by hyphens, e.g. "3-6-2-8") corresponding to the four correct fragments in the correct order.
-    </p>
-    <!-- Embedded video (replace with actual clip if desired) -->
-    <div>
-      <iframe width="560" height="315" src="https://www.youtube.com/embed/8V20LS9h_0Q" title="Aladdin Clip" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <h1>Stage 4: Three Wishes Challenge</h1>
+    
+    <div class="wish-tabs">
+      <div class="wish-tab active" onclick="showChallenge(1)">Wish 1</div>
+      <div class="wish-tab" onclick="showChallenge(2)">Wish 2</div>
+      <div class="wish-tab" onclick="showChallenge(3)">Wish 3</div>
     </div>
-    <br>
-    <!-- Fragments table will be generated dynamically -->
-    <table id="fragmentsTable">
-      <tr>
-        <th>Fragment</th>
-        <th>Image</th>
-        <th>Number</th>
-      </tr>
-    </table>
-    <p>Please enter the sequence of numbers corresponding to the four correct fragments in the correct order (separated by hyphens):</p>
-    <form id="fragmentForm">
-      <input type="text" id="sequenceInput" placeholder="e.g., 3-6-2-8">
-      <button type="submit">Submit Sequence</button>
-    </form>
-    <div id="result"></div>
+
+    <!-- Wish 1: Riddle -->
+    <div class="challenge-container active" id="challenge1">
+      <p>"I have cities, but no houses. I have mountains, but no trees. I have water, but no fish. What am I?"</p>
+      <form onsubmit="checkRiddle(event)">
+        <input type="text" placeholder="Your answer..." id="riddleAnswer">
+        <button type="submit">Submit Answer</button>
+      </form>
+      <div id="riddleResult"></div>
+    </div>
+
+    <!-- Wish 2: Math Puzzle -->
+    <div class="challenge-container" id="challenge2">
+      <p>"I am a 3-digit number. My tens digit is 5 more than my ones digit, and my hundreds digit is 8 less than my tens digit. What am I?"</p>
+      <form onsubmit="checkMath(event)">
+        <input type="number" placeholder="Enter number" id="mathAnswer">
+        <button type="submit">Solve Puzzle</button>
+      </form>
+      <div id="mathResult"></div>
+    </div>
+
+    <!-- Wish 3: Cipher -->
+    <div class="challenge-container" id="challenge3">
+      <div class="cipher-box">Gur frperg jbeq vf Genpxre</div>
+      <form onsubmit="checkCipher(event)">
+        <input type="text" placeholder="Decoded message" id="cipherAnswer">
+        <button type="submit">Decipher</button>
+      </form>
+      <div id="cipherResult"></div>
+    </div>
   </div>
-  
+
+  <!-- Genie Animation -->
+  <div id="genieAnimation">
+    <img src="./genie.png" alt="Magic Genie">
+    <div id="genieMessage">
+      <p>By the sands of time! The path is revealed!</p>
+      <a href="stage5.html" style="color: #ffd700; text-decoration: none; font-weight: bold;">
+        Proceed to the Final Challenge →
+      </a>
+    </div>
+  </div>
+
   <script>
-    // Define the fragments
-    // correct: true for genuine Aladdin artifacts
-    const fragments = [
-      { name: "Magic Lamp", image: "./lamp.webp", correct: true },
-      { name: "Royal Crown", image: "./crown.webp", correct: false },
-      { name: "Ancient Book", image: "./book.webp", correct: true },
-      { name: "Flying Carpet", image: "./carpet.webp", correct: false },
-      { name: "Shining Star", image: "./star.webp", correct: true },
-      { name: "Jasmine Portrait", image: "./princess.webp", correct: false },
-      { name: "Crescent Moon", image: "./moon.webp", correct: true },
-      { name: "Charming Parrot", image: "./parrot.webp", correct: false }
-    ];
-    
-    // Randomly assign unique numbers 1 through 8 to each fragment
-    const numbers = [1,2,3,4,5,6,7,8];
-    numbers.sort(() => Math.random() - 0.5); // Shuffle numbers randomly
-    fragments.forEach((fragment, index) => {
-      fragment.assignedNumber = numbers[index];
-    });
-    
-    // Populate the table with fragments
-    const table = document.getElementById("fragmentsTable");
-    fragments.forEach(fragment => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${fragment.name}</td>
-        <td><img src="${fragment.image}" alt="${fragment.name}"></td>
-        <td>${fragment.assignedNumber}</td>
-      `;
-      // Store whether the fragment is correct as a data attribute (hidden to user)
-      row.dataset.correct = fragment.correct;
-      row.dataset.name = fragment.name;
-      row.dataset.assigned = fragment.assignedNumber;
-      table.appendChild(row);
-    });
-    
-    // Predetermined order for the correct fragments (by name)
-    // For example, the order is: Magic Lamp, Ancient Book, Shining Star, Crescent Moon.
-    const correctOrder = ["Magic Lamp", "Ancient Book", "Shining Star", "Crescent Moon"];
-    
-    // Compute the correct sequence by mapping the correct fragments (in predetermined order) to their assigned numbers.
-    let correctSequence = correctOrder.map(name => {
-      const frag = fragments.find(f => f.name === name);
-      return frag ? frag.assignedNumber : null;
-    }).join("-");
-    
-    // For testing purposes, you can uncomment the following line to log the correct sequence in the console:
-    // console.log("Correct Sequence:", correctSequence);
-    
-    document.getElementById("fragmentForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      const userSequence = document.getElementById("sequenceInput").value.trim();
-      const resultDiv = document.getElementById("result");
+    // Tab navigation
+    function showChallenge(num) {
+      document.querySelectorAll('.wish-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.challenge-container').forEach(c => c.classList.remove('active'));
       
-      if (userSequence === correctSequence) {
-        resultDiv.innerHTML = '<div class="success">Correct! You have unlocked the next stage.</div>';
+      document.querySelector(`.wish-tab:nth-child(${num})`).classList.add('active');
+      document.getElementById(`challenge${num}`).classList.add('active');
+    }
+
+    // Wish 1 validation
+    function checkRiddle(e) {
+      e.preventDefault();
+      const answer = document.getElementById('riddleAnswer').value.toLowerCase();
+      const resultDiv = document.getElementById('riddleResult');
+      
+      if(answer === 'map') {
+        resultDiv.innerHTML = '<div class="success">Correct! But the map leads to a bottomless pit!</div>';
       } else {
-        resultDiv.innerHTML = '<div class="error">Incorrect sequence. Please review the video and try again.</div>';
+        resultDiv.innerHTML = '<div class="error">Incorrect! The parchment crumbles to dust...</div>';
       }
-    });
+    }
+
+    // Wish 2 validation
+    function checkMath(e) {
+      e.preventDefault();
+      const answer = document.getElementById('mathAnswer').value;
+      const resultDiv = document.getElementById('mathResult');
+      
+      if(answer === '194') {
+        resultDiv.innerHTML = '<div class="success">Coordinates accepted... but it\'s a sand trap!</div>';
+      } else {
+        resultDiv.innerHTML = '<div class="error">Incorrect! The walls start closing in...</div>';
+      }
+    }
+
+    // Wish 3 validation
+    function checkCipher(e) {
+      e.preventDefault();
+      const answer = document.getElementById('cipherAnswer').value.toLowerCase();
+      const genie = document.getElementById('genieAnimation');
+      
+      if(answer === 'tracker') {
+        genie.style.display = 'block';
+        document.getElementById('cipherResult').innerHTML = '';
+        genie.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        document.getElementById('cipherResult').innerHTML = '<div class="error">Incorrect! The cipher glows red...</div>';
+      }
+    }
   </script>
 </body>
 </html>
