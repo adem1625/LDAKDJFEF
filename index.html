@@ -3,15 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <title>The Genie and Escape</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    /* Gradient animation */
+    /* Common Animations */
     @keyframes gradientAnimation {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes genieAppear {
+      from { opacity: 0; transform: translate(-50%, -40%); }
+      to { opacity: 1; transform: translate(-50%, -50%); }
+    }
+    /* Puzzle-specific animations (renamed to avoid conflicts) */
+    @keyframes victoryGlow {
+      0% { text-shadow: 0 0 10px rgba(255,215,0,0.5); }
+      50% { text-shadow: 0 0 30px rgba(255,215,0,0.9); }
+      100% { text-shadow: 0 0 10px rgba(255,215,0,0.5); }
+    }
+    @keyframes puzzleAppear {
+      0% { 
+          transform: scale(0) rotate(-360deg);
+          opacity: 0;
+      }
+      80% {
+          transform: scale(1.1) rotate(10deg);
+          opacity: 1;
+      }
+      100% {
+          transform: scale(1) rotate(0deg);
+          opacity: 1;
+      }
+    }
 
+    /* Global Styles */
     body {
       margin: 0;
       padding: 0;
@@ -23,33 +53,6 @@
       min-height: 100vh;
       overflow-y: auto;
     }
-
-    /* Fixed stage header */
-    .stage-header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      text-align: center;
-      padding: 20px 0;
-      background: linear-gradient(45deg, #4B0082aa, #00008Baa);
-      backdrop-filter: blur(5px);
-      border-bottom: 2px solid #ffd700;
-      z-index: 3;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-    }
-
-    .stage-header h1 {
-      margin: 0;
-      font-size: 2.5em;
-      color: #ffd700;
-      text-shadow: 0 0 10px #8A2BE2,
-                   0 0 20px #1E90FF,
-                   2px 2px 2px rgba(0,0,0,0.5);
-      letter-spacing: 2px;
-    }
-
-    /* Main container */
     .container {
       background: rgba(0, 0, 50, 0.85);
       padding: 40px 50px;
@@ -58,81 +61,47 @@
       max-width: 600px;
       width: 90%;
       border: 2px solid #ffd700;
-      margin: 120px auto 40px; /* Added space for fixed header */
+      margin: 40px auto;
       animation: fadeInUp 1s ease-out forwards;
       opacity: 0;
-      position: relative;
-      z-index: 2;
     }
-
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    /* Make sure the main container is visible */
+    .container.active {
+      opacity: 1;
     }
-
-    /* Wish tabs styling */
-    .wish-tabs {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      margin: 30px 0;
+    h1 {
+      text-align: center;
+      font-size: 2.5em;
+      color: #FFD700;
+      text-shadow: 0 0 10px rgba(255,215,0,0.8);
+      letter-spacing: 2px;
+      margin-bottom: 20px;
     }
-
-    .wish-tab {
-      padding: 12px 25px;
-      background: linear-gradient(45deg, #4B0082, #8A2BE2);
-      border: 2px solid #ffd700;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-size: 1.1em;
-      color: #ffd700;
-      text-shadow: 0 0 5px #ffd700;
-      box-shadow: 0 2px 8px rgba(255,215,0,0.3);
-    }
-
-    .wish-tab.active {
-      background: linear-gradient(45deg, #8A2BE2, #1E90FF);
-      box-shadow: 0 0 15px rgba(255,215,0,0.5);
-    }
-
-    /* Challenge containers */
-    .challenge-container {
-      display: none;
-      background: rgba(0, 0, 0, 0.3);
+    .sand-text {
+      font-size: 1.4em;
       padding: 25px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 2px solid #b8860b;
       border-radius: 8px;
-      border: 1px solid #ffd700;
-      margin: 20px 0;
+      margin: 30px 0;
+      line-height: 1.6;
+      font-family: monospace;
+      letter-spacing: 3px;
     }
-
-    .challenge-container.active {
-      display: block;
-      animation: fadeInUp 0.5s ease-out;
-    }
-
-    /* Form elements */
     input[type="text"], input[type="number"] {
       width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      font-size: 1em;
+      padding: 15px;
+      margin: 20px 0;
+      font-size: 1.2em;
       border: 2px solid #ffd700;
       border-radius: 5px;
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.9);
       color: #333;
-      transition: all 0.3s ease;
+      text-align: center;
     }
-
-    input:focus {
-      border-color: #8A2BE2;
-      outline: none;
-      box-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
-    }
-
     button {
-      padding: 12px 25px;
-      font-size: 1.1em;
+      padding: 15px 30px;
+      font-size: 1.2em;
       background-color: #9370DB;
       color: #fff;
       border: none;
@@ -140,185 +109,327 @@
       cursor: pointer;
       transition: all 0.3s ease;
       width: 100%;
-      margin-top: 15px;
     }
-
     button:hover {
       background-color: #8A2BE2;
       transform: scale(1.05);
     }
-
-    /* Genie animation */
-    #genieAnimation {
+    /* Challenge display */
+    .challenge {
       display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 1000;
+    }
+    .challenge.active {
+      display: block;
+      animation: fadeInUp 0.5s ease-out;
+    }
+
+    /* Puzzle Game Styles (Challenge 3) */
+    .puzzle-container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      margin: 10px auto;
+      position: relative;
+      max-width: 500px;
+    }
+    .puzzle-piece {
+      width: 20vw;
+      height: 20vw;
+      max-width: 120px;
+      max-height: 120px;
+      background-image: url(./genie.png);
+      background-size: 400% 400%;
+      border: 2px solid #b8860b;
+      transition: transform 0.3s ease;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      position: relative;
+      user-select: none;
+      touch-action: none;
+    }
+    .puzzle-piece.active {
+      transition: none;
+      z-index: 2;
+      box-shadow: 0 0 15px rgba(255,215,0,0.5);
+      filter: brightness(1.1);
+    }
+    #winMessage {
+      display: none;
+      color: #FFD700;
+      font-size: 1.5em;
       text-align: center;
-    }
-
-    #genieAnimation img {
-      width: 300px;
-      animation: genieFadeIn 1s ease-out forwards;
-    }
-
-    #genieMessage {
-      margin-top: 20px;
-      font-size: 1.4em;
+      padding: 15px;
       background: rgba(0, 0, 50, 0.9);
-      padding: 20px;
+      border: 2px solid #ffd700;
       border-radius: 10px;
-      border: 2px solid #ffd700;
-      box-shadow: 0 0 20px rgba(255,215,0,0.5);
+      margin-top: 15px;
+      animation: puzzleAppear 1.5s ease-out forwards;
     }
-
-    @keyframes genieFadeIn {
-      from { opacity: 0; transform: scale(0.5) translateY(50px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
+    .victory-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
     }
-
-    /* Result messages */
-    .success {
-      color: #90EE90;
-      background: rgba(0, 255, 0, 0.15);
-      padding: 15px;
-      border-radius: 8px;
-      border: 1px solid #90EE90;
-      margin: 15px 0;
+    .victory-content {
+      text-align: center;
+      animation: puzzleAppear 1.5s ease-out;
     }
-
-    .error {
-      color: #ff4d4d;
-      background: rgba(255, 0, 0, 0.15);
-      padding: 15px;
-      border-radius: 8px;
-      border: 1px solid #ff4d4d;
-      margin: 15px 0;
-    }
-
-    /* Cipher box */
-    .cipher-box {
-      font-family: 'Cinzel', serif;
-      font-size: 1.2em;
-      letter-spacing: 2px;
-      padding: 15px;
-      background: linear-gradient(45deg, #4B0082aa, #00008Baa);
-      border-radius: 5px;
-      margin: 15px 0;
-      border: 2px solid #ffd700;
-      color: #ffd700;
-      text-shadow: 0 0 5px #8A2BE2;
-      box-shadow: inset 0 0 10px rgba(255,215,0,0.3);
+    @media (max-width: 600px) {
+      .container {
+        padding: 15px;
+        margin: 10px;
+      }
+      h1 {
+        font-size: 1.5em;
+      }
+      .puzzle-piece {
+        width: 22vw;
+        height: 22vw;
+      }
     }
   </style>
 </head>
 <body>
-  <!-- Fixed stage header -->
-  <div class="stage-header">
-    <h1>The Genie and Escape</h1>
-  </div>
-
-  <div class="container">
-    <div class="wish-tabs">
-      <div class="wish-tab active" onclick="showChallenge(1)">Wish 1</div>
-      <div class="wish-tab" onclick="showChallenge(2)">Wish 2</div>
-      <div class="wish-tab" onclick="showChallenge(3)">Wish 3</div>
-    </div>
-
-    <!-- Wish 1: Riddle -->
-    <div class="challenge-container active" id="challenge1">
-      <p>"I have cities, but no houses. I have mountains, but no trees. I have water, but no fish. What am I?"</p>
+  <!-- Main Game Container -->
+  <div class="container active" id="gameContainer">
+    <!-- Challenge 1: Riddle -->
+    <div id="challenge1" class="challenge active">
+      <h1>Wish 1: The Enchanted Riddle</h1>
+      <div class="sand-text">
+        "I'm neither spirit nor man, but both I can be. What am I?"
+      </div>
       <form onsubmit="checkRiddle(event)">
-        <input type="text" placeholder="Your answer..." id="riddleAnswer">
+        <input type="text" id="riddleAnswer" placeholder="Your answer...">
         <button type="submit">Submit Answer</button>
       </form>
-      <div id="riddleResult"></div>
     </div>
 
-    <!-- Wish 2: Math Puzzle -->
-    <div class="challenge-container" id="challenge2">
-      <p>"I am a 3-digit number. My tens digit is 5 more than my ones digit, and my hundreds digit is 8 less than my tens digit. What am I?"</p>
-      <form onsubmit="checkMath(event)">
-        <input type="number" placeholder="Enter number" id="mathAnswer">
-        <button type="submit">Solve Puzzle</button>
+    <!-- Challenge 2: New Riddle -->
+    <div id="challenge2" class="challenge">
+      <h1>Wish 2: The Origin Question</h1>
+      <div class="sand-text">
+        "You have made your first wish, now another must come,<br>
+        But before I grant it, answer where I'm from."
+      </div>
+      <form onsubmit="checkSecondRiddle(event)">
+        <input type="text" id="secondRiddleAnswer" placeholder="Your answer...">
+        <button type="submit">Reveal Origin</button>
       </form>
-      <div id="mathResult"></div>
     </div>
 
-    <!-- Wish 3: Cipher -->
-    <div class="challenge-container" id="challenge3">
-      <div class="cipher-box">Gur frperg jbeq vf Genpxre</div>
-      <form onsubmit="checkCipher(event)">
-        <input type="text" placeholder="Decoded message" id="cipherAnswer">
-        <button type="submit">Decipher</button>
-      </form>
-      <div id="cipherResult"></div>
+    <!-- Challenge 3: Mystical Image Puzzle -->
+    <div id="challenge3" class="challenge">
+      <h1>Mystical Image Puzzle</h1>
+      <div class="puzzle-container" id="puzzleContainer"></div>
+      <div id="winMessage">Puzzle Solved! Ancient Magic Restored! 🔮</div>
     </div>
   </div>
 
-  <!-- Genie Animation -->
-  <div id="genieAnimation">
-    <img src="./genie.png" alt="Magic Genie">
-    <div id="genieMessage">
-      <p>By the sands of time! The path is revealed!</p>
-      <a href="https://adem1625.github.io/treasure-hunt-4.0/" style="color: #ffd700; text-decoration: none; font-weight: bold;">
+  <!-- Victory Overlay -->
+  <div class="victory-overlay" id="victoryOverlay">
+    <div class="victory-content">
+      <h2 style="font-size: 2.5em; margin-bottom: 15px;">🌟 Victory! 🌟</h2>
+      <p style="font-size: 1.2em;">The arcane energies have been stabilized!</p>
+      <a href="https://adem1625.github.io/treasure-hunt-6.0/" style="color: #FFD700; text-decoration: none; font-weight: bold;">
         Proceed to the Final Challenge →
       </a>
     </div>
   </div>
 
+  <!-- Script for Challenges -->
   <script>
-    // Tab navigation
-    function showChallenge(num) {
-      document.querySelectorAll('.wish-tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.challenge-container').forEach(c => c.classList.remove('active'));
-      
-      document.querySelector(`.wish-tab:nth-child(${num})`).classList.add('active');
-      document.getElementById(`challenge${num}`).classList.add('active');
-    }
-
-    // Wish 1 validation
     function checkRiddle(e) {
       e.preventDefault();
-      const answer = document.getElementById('riddleAnswer').value.toLowerCase();
-      const resultDiv = document.getElementById('riddleResult');
-      
-      if(answer === 'map') {
-        resultDiv.innerHTML = '<div class="success">Correct! But the map leads to a bottomless pit!</div>';
+      const answer = document.getElementById('riddleAnswer').value.trim().toLowerCase();
+      if(answer === 'genie') {
+        document.getElementById('challenge1').classList.remove('active');
+        document.getElementById('challenge2').classList.add('active');
       } else {
-        resultDiv.innerHTML = '<div class="error">Incorrect! The parchment crumbles to dust...</div>';
+        alert('Incorrect! The magic backfires...');
       }
     }
 
-    // Wish 2 validation
-    function checkMath(e) {
+    function checkSecondRiddle(e) {
       e.preventDefault();
-      const answer = document.getElementById('mathAnswer').value;
-      const resultDiv = document.getElementById('mathResult');
-      
-      if(answer === '194') {
-        resultDiv.innerHTML = '<div class="success">Coordinates accepted... but it\'s a sand trap!</div>';
+      const answer = document.getElementById('secondRiddleAnswer').value.trim().toLowerCase();
+      if(answer === 'magic lamp') {
+        document.getElementById('challenge2').classList.remove('active');
+        document.getElementById('challenge3').classList.add('active');
       } else {
-        resultDiv.innerHTML = '<div class="error">Incorrect! The walls start closing in...</div>';
+        alert('Incorrect! The lamp grows colder...');
+      }
+    }
+  </script>
+
+  <!-- Puzzle Game Script for Challenge 3 -->
+  <script>
+    const puzzleContainer = document.getElementById('puzzleContainer');
+    const victoryOverlay = document.getElementById('victoryOverlay');
+    const gridSize = 4;
+    let draggedPiece = null;
+    let offsetX = 0, offsetY = 0;
+    let startX = 0, startY = 0;
+
+    // Create puzzle pieces with data attributes for tracking positions.
+    function createPuzzle() {
+      puzzleContainer.innerHTML = '';
+      const pieces = [];
+
+      for (let row = 0; row < gridSize; row++) {
+        for (let col = 0; col < gridSize; col++) {
+          const piece = document.createElement('div');
+          piece.className = 'puzzle-piece';
+          piece.style.backgroundPosition = `${(col / (gridSize - 1)) * 100}% ${(row / (gridSize - 1)) * 100}%`;
+          piece.dataset.originalRow = row;
+          piece.dataset.originalCol = col;
+          piece.dataset.currentRow = row;
+          piece.dataset.currentCol = col;
+
+          if (window.PointerEvent) {
+            piece.addEventListener('pointerdown', onDragStart);
+            piece.addEventListener('pointermove', onDragMove);
+            piece.addEventListener('pointerup', onDragEnd);
+            piece.addEventListener('pointercancel', onDragEnd);
+          } else {
+            piece.addEventListener('touchstart', onTouchStart, { passive: false });
+            piece.addEventListener('touchmove', onTouchMove, { passive: false });
+            piece.addEventListener('touchend', onTouchEnd);
+            piece.addEventListener('touchcancel', onTouchEnd);
+          }
+          pieces.push(piece);
+        }
+      }
+
+      // Shuffle pieces
+      shufflePieces(pieces);
+      pieces.forEach(piece => puzzleContainer.appendChild(piece));
+    }
+
+    function shufflePieces(pieces) {
+      for (let i = pieces.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        swapPieces(pieces[i], pieces[j], true);
       }
     }
 
-    // Wish 3 validation
-    function checkCipher(e) {
+    // Pointer Events Handlers
+    function onDragStart(e) {
       e.preventDefault();
-      const answer = document.getElementById('cipherAnswer').value.toLowerCase();
-      const genie = document.getElementById('genieAnimation');
-      
-      if(answer === 'tracker') {
-        genie.style.display = 'block';
-        document.getElementById('cipherResult').innerHTML = '';
-        genie.scrollIntoView({ behavior: 'smooth' });
-      } else {
-        document.getElementById('cipherResult').innerHTML = '<div class="error">Incorrect! The cipher glows red...</div>';
+      draggedPiece = e.currentTarget;
+      draggedPiece.classList.add('active');
+      const rect = draggedPiece.getBoundingClientRect();
+      offsetX = e.clientX - rect.left;
+      offsetY = e.clientY - rect.top;
+      startX = e.clientX;
+      startY = e.clientY;
+      draggedPiece.setPointerCapture(e.pointerId);
+    }
+
+    function onDragMove(e) {
+      if (!draggedPiece) return;
+      const deltaX = e.clientX - startX;
+      const deltaY = e.clientY - startY;
+      draggedPiece.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+    }
+
+    function onDragEnd(e) {
+      if (!draggedPiece) return;
+      const rect = draggedPiece.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      draggedPiece.style.display = 'none';
+      const dropElem = document.elementFromPoint(centerX, centerY);
+      draggedPiece.style.display = '';
+      const targetPiece = dropElem ? dropElem.closest('.puzzle-piece') : null;
+      if (targetPiece && targetPiece !== draggedPiece) {
+        swapPieces(draggedPiece, targetPiece, true);
+        checkWin();
+      }
+      draggedPiece.style.transform = '';
+      draggedPiece.classList.remove('active');
+      draggedPiece.releasePointerCapture(e.pointerId);
+      draggedPiece = null;
+    }
+
+    // Touch Events Handlers
+    function onTouchStart(e) {
+      e.preventDefault();
+      draggedPiece = e.currentTarget;
+      draggedPiece.classList.add('active');
+      const touch = e.touches[0];
+      const rect = draggedPiece.getBoundingClientRect();
+      offsetX = touch.clientX - rect.left;
+      offsetY = touch.clientY - rect.top;
+      startX = touch.clientX;
+      startY = touch.clientY;
+    }
+
+    function onTouchMove(e) {
+      if (!draggedPiece) return;
+      const touch = e.touches[0];
+      const deltaX = touch.clientX - startX;
+      const deltaY = touch.clientY - startY;
+      draggedPiece.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+    }
+
+    function onTouchEnd(e) {
+      if (!draggedPiece) return;
+      const touch = e.changedTouches && e.changedTouches.length ? e.changedTouches[0] : { clientX: startX, clientY: startY };
+      const rect = draggedPiece.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      draggedPiece.style.display = 'none';
+      const dropElem = document.elementFromPoint(centerX, centerY);
+      draggedPiece.style.display = '';
+      const targetPiece = dropElem ? dropElem.closest('.puzzle-piece') : null;
+      if (targetPiece && targetPiece !== draggedPiece) {
+        swapPieces(draggedPiece, targetPiece, true);
+        checkWin();
+      }
+      draggedPiece.style.transform = '';
+      draggedPiece.classList.remove('active');
+      draggedPiece = null;
+    }
+
+    function swapPieces(piece1, piece2, updateData) {
+      const tempPos = piece1.style.backgroundPosition;
+      piece1.style.backgroundPosition = piece2.style.backgroundPosition;
+      piece2.style.backgroundPosition = tempPos;
+
+      if (updateData) {
+        const tempRow = piece1.dataset.currentRow;
+        const tempCol = piece1.dataset.currentCol;
+        piece1.dataset.currentRow = piece2.dataset.currentRow;
+        piece1.dataset.currentCol = piece2.dataset.currentCol;
+        piece2.dataset.currentRow = tempRow;
+        piece2.dataset.currentCol = tempCol;
       }
     }
+
+    function checkWin() {
+      const allCorrect = Array.from(puzzleContainer.children).every(piece => {
+        return piece.dataset.originalRow === piece.dataset.currentRow &&
+               piece.dataset.originalCol === piece.dataset.currentCol;
+      });
+      if (allCorrect) {
+        document.getElementById('winMessage').style.display = 'block';
+        victoryOverlay.style.display = 'flex';
+        puzzleContainer.style.transform = 'scale(1.05)';
+        puzzleContainer.style.filter = 'drop-shadow(0 0 20px gold)';
+        setTimeout(() => {
+          puzzleContainer.style.transform = 'scale(1)';
+        }, 1000);
+      }
+    }
+
+    // Initialize the puzzle game
+    createPuzzle();
   </script>
 </body>
 </html>
